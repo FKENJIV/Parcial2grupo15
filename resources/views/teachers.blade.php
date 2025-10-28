@@ -10,12 +10,12 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-2">Buscar docente</label>
-                <input type="text" placeholder="Nombre, email o código..." class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                <input type="text" placeholder="Nombre, email o código..." class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
-                <select class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                <select class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                     <option value="all">Todos</option>
                     <option value="active">Activos</option>
                     <option value="inactive">Inactivos</option>
@@ -74,7 +74,7 @@
                         <td class="py-4 text-sm text-gray-600">{{ $teacher->code ?? 'DOC-' . str_pad($teacher->id, 3, '0', STR_PAD_LEFT) }}</td>
                         <td class="py-4">
                             @if($teacher->status ?? 'active' === 'active')
-                                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Activo</span>
+                                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full">Activo</span>
                             @else
                                 <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">Inactivo</span>
                             @endif
@@ -157,23 +157,38 @@
                 modalTitle.textContent = 'Editar Docente';
                 submitButtonText.textContent = 'Actualizar Docente';
 
-                // Fetch teacher data and populate form
-                fetch(`/docentes/${teacherId}`)
-                    .then(response => response.json())
+                // Fetch teacher data and populate form (use same-origin credentials and accept JSON)
+                fetch(`/docentes/${teacherId}`, {
+                    headers: { 'Accept': 'application/json' },
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        console.log('docentes.show response status:', response.status);
+                        const contentType = response.headers.get('content-type') || '';
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        if (!contentType.includes('application/json')) {
+                            return response.text().then(text => {
+                                console.error('Expected JSON but received:', text);
+                                throw new Error('Invalid JSON response');
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        form.querySelector('[name="name"]').value = data.name || '';
-                        form.querySelector('[name="email"]').value = data.email || '';
-                        form.querySelector('[name="code"]').value = data.code || '';
-                        form.querySelector('[name="phone"]').value = data.phone || '';
-                        form.querySelector('[name="type"]').value = data.type || '';
-                        form.querySelector('[name="status"]').value = data.status || 'active';
-                        form.querySelector('[name="specialties"]').value = data.specialties || '';
+                        console.log('docentes.show JSON payload:', data);
+                        form.querySelector('[name="name"]').value = data.name ?? '';
+                        form.querySelector('[name="email"]').value = data.email ?? '';
+                        form.querySelector('[name="code"]').value = data.code ?? '';
+                        form.querySelector('[name="phone"]').value = data.phone ?? '';
+                        form.querySelector('[name="type"]').value = data.type ?? '';
+                        form.querySelector('[name="status"]').value = data.status ?? 'active';
+                        form.querySelector('[name="specialties"]').value = data.specialties ?? '';
                         form.action = `/docentes/${teacherId}`;
                         form.querySelector('input[name="_method"]').value = 'PUT';
                     })
                     .catch(error => {
                         console.error('Error loading teacher data:', error);
-                        alert('Error al cargar los datos del docente');
+                        alert('Error al cargar los datos del docente. Comprueba que estás autenticado.');
                     });
             } else {
                 // Reset form for new teacher

@@ -10,7 +10,7 @@ use App\Models\Schedule;
 
 class Group extends Model
 {
-    protected $fillable = ['name', 'subject', 'capacity', 'teacher_id'];
+    protected $fillable = ['subject', 'code', 'max_students', 'classroom', 'teacher_id'];
 
     public function teacher(): BelongsTo
     {

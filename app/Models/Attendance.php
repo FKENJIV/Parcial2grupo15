@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User;
-use App\Models\Group;
 use App\Models\Schedule;
 
 class Attendance extends Model
 {
-    protected $fillable = ['teacher_id', 'group_id', 'schedule_id', 'status', 'aula', 'registered_at'];
+    protected $fillable = ['teacher_id', 'schedule_id', 'attended_at', 'status', 'notes'];
+
+    protected $casts = [
+        'attended_at' => 'datetime',
+    ];
 
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
     }
 
     public function schedule(): BelongsTo

@@ -16,23 +16,33 @@ use Livewire\Volt\Volt;
 Route::get('/', function () {
     // Redirect authenticated users to dashboard, guests to the login page
     if (auth()->check()) {
+        // Redirect based on role
+        if (in_array(auth()->user()->role, ['teacher', 'docente'])) {
+            return redirect()->route('teacher.dashboard');
+        }
         return redirect()->route('dashboard');
     }
 
     return redirect()->route('login');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
+// Admin/Superuser dashboard
+Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'admin'])
     ->name('dashboard');
 
+// Teacher dashboard
+Route::get('teacher/dashboard', [\App\Http\Controllers\Teacher\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'teacher'])
+    ->name('teacher.dashboard');
+
 // Application pages used in the UI (protected by auth)
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('horarios', 'schedules')->name('horarios');
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::get('horarios', [\App\Http\Controllers\Admin\ScheduleController::class, 'viewAll'])->name('horarios');
     Route::view('administrar-carga', 'admin-load')->name('administrar.carga');
     Route::view('registro-asistencia', 'attendance')->name('registro.asistencia');
 
-    // Teacher management routes
+    // Teacher management routes (admin only)
     Route::resource('docentes', TeacherController::class)->names([
         'index' => 'docentes.index',
         'create' => 'docentes.create',
@@ -42,6 +52,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'update' => 'docentes.update',
         'destroy' => 'docentes.destroy',
     ]);
+
+    // Schedule management routes (admin only)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('schedules', [\App\Http\Controllers\Admin\ScheduleController::class, 'index'])->name('schedules.index');
+        Route::get('schedules/{group}/edit', [\App\Http\Controllers\Admin\ScheduleController::class, 'edit'])->name('schedules.edit');
+        Route::put('schedules/{group}', [\App\Http\Controllers\Admin\ScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('schedules/{group}', [\App\Http\Controllers\Admin\ScheduleController::class, 'destroy'])->name('schedules.destroy');
+    });
+});
+
+// Teacher-specific routes (CU3, CU4, CU5)
+Route::middleware(['auth', 'verified', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    // CU3: Ver horarios asignados
+    Route::get('schedules', [\App\Http\Controllers\Teacher\ScheduleController::class, 'index'])->name('schedules');
+
+    // CU4: Crear grupo y asignar horario
+    Route::get('groups/create', [\App\Http\Controllers\Teacher\GroupController::class, 'create'])->name('groups.create');
+    Route::post('groups', [\App\Http\Controllers\Teacher\GroupController::class, 'store'])->name('groups.store');
+
+    // CU5: Registrar asistencia docente
+    Route::get('attendance', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendance');
+    Route::post('attendance', [\App\Http\Controllers\Teacher\AttendanceController::class, 'store'])->name('attendance.store');
 });
 
 Route::middleware(['auth'])->group(function () {

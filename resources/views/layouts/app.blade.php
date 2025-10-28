@@ -21,18 +21,18 @@
                     Dashboard
                 </a>
 
-                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('schedules.index') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('schedules.index') }}">
+                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('horarios') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('horarios') }}">
                     Ver Horarios
                 </a>
 
-                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin-load.index') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin-load.index') }}">
+                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('administrar.carga') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('administrar.carga') }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin-load.index') ? 'text-white opacity-90' : 'text-gray-500' }}" viewBox="0 0 24 24" fill="none">
                         <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                     Administrar Carga
                 </a>
 
-                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('attendance.index') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('attendance.index') }}">
+                <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('registro.asistencia') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('registro.asistencia') }}">
                     Registro Asistencia
                 </a>
 
@@ -53,7 +53,7 @@
 
                 <form method="POST" action="{{ route('logout') }}" class="mt-4">
                     @csrf
-                    <button type="submit" class="w-full py-2 rounded-lg border border-red-300 text-red-600 hover:bg-red-50">
+                    <button type="submit" class="w-full py-2 rounded-lg border border-indigo-100 text-indigo-700 hover:bg-indigo-50">
                         CERRAR SESIÓN
                     </button>
                 </form>

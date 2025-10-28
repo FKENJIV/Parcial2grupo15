@@ -20,7 +20,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Materia</label>
-                    <select name="materia" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                    <select name="materia" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                         <option value="">Seleccionar materia...</option>
                         <option value="si1">Sistemas de Información 1</option>
                         <option value="bd">Base de Datos</option>
@@ -31,19 +31,19 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Nombre del Grupo</label>
-                    <input type="text" name="grupo" required placeholder="Ej: Grupo SC" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                    <input type="text" name="grupo" required placeholder="Ej: Grupo SC" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Cupo Máximo de Estudiantes</label>
-                    <input type="number" name="cupo" required placeholder="Ej: 30" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                    <input type="number" name="cupo" required placeholder="Ej: 30" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Periodo Académico</label>
-                    <select name="periodo" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                    <select name="periodo" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                         <option value="">Seleccionar periodo...</option>
                         <option value="2025-1">2025-1</option>
                         <option value="2025-2">2025-2</option>
@@ -88,7 +88,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Día</label>
-                            <select name="dia_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                            <select name="dia_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                                 <option value="">Seleccionar día...</option>
                                 <option value="lunes">Lunes</option>
                                 <option value="martes">Martes</option>
@@ -100,16 +100,16 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Inicio</label>
-                            <input type="time" name="hora_inicio_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_inicio_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Fin</label>
-                            <input type="time" name="hora_fin_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_fin_1" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                     </div>
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-600 mb-2">Aula</label>
-                        <input type="text" name="aula_1" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="aula_1" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
                 </div>
 
@@ -122,7 +122,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Día</label>
-                            <select name="dia_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                            <select name="dia_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                                 <option value="">Seleccionar día...</option>
                                 <option value="lunes">Lunes</option>
                                 <option value="martes">Martes</option>
@@ -134,16 +134,16 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Inicio</label>
-                            <input type="time" name="hora_inicio_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_inicio_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Fin</label>
-                            <input type="time" name="hora_fin_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_fin_2" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                     </div>
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-600 mb-2">Aula</label>
-                        <input type="text" name="aula_2" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="aula_2" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
                 </div>
 
@@ -156,7 +156,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Día</label>
-                            <select name="dia_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                            <select name="dia_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                                 <option value="">Seleccionar día...</option>
                                 <option value="lunes">Lunes</option>
                                 <option value="martes">Martes</option>
@@ -168,16 +168,16 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Inicio</label>
-                            <input type="time" name="hora_inicio_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_inicio_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Hora Fin</label>
-                            <input type="time" name="hora_fin_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                            <input type="time" name="hora_fin_3" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                         </div>
                     </div>
                     <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-600 mb-2">Aula</label>
-                        <input type="text" name="aula_3" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="aula_3" placeholder="Ej: 301-A" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
                 </div>
             </div>

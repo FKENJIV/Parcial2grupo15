@@ -12,14 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('student')->after('password');
-            $table->string('code')->nullable()->after('role');
+            // 'role' was added in an earlier migration; only add teacher-specific fields here
+            $table->string('code')->nullable()->after('password');
             $table->string('type')->nullable()->after('code');
             $table->string('phone')->nullable()->after('type');
             $table->string('status')->default('active')->after('phone');
             $table->text('specialties')->nullable()->after('status');
-            $table->string('api_token', 80)->unique()->nullable()->after('specialties');
-            $table->timestamp('api_token_expires_at')->nullable()->after('api_token');
         });
     }
 
@@ -30,14 +28,11 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'role',
                 'code',
                 'type',
                 'phone',
                 'status',
                 'specialties',
-                'api_token',
-                'api_token_expires_at',
             ]);
         });
     }

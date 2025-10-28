@@ -15,7 +15,7 @@
             @if($required) required @endif
             value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}"
-            {{ $attributes->merge(['class' => 'block w-full px-4 py-2.5 bg-white border-2 border-sky-200 rounded-lg text-sky-800 placeholder-sky-300 shadow focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition-all']) }}
+            {{ $attributes->merge(['class' => 'block w-full px-4 py-2.5 bg-white border-2 border-indigo-100 rounded-lg text-indigo-800 placeholder-indigo-300 shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all']) }}
         />
     </div>
     @error($name)

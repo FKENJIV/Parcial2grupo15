@@ -11,7 +11,7 @@ class TeacherController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role', 'teacher');
+        $query = User::whereIn('role', ['teacher', 'docente']);
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -34,8 +34,14 @@ class TeacherController extends Controller
         return view('teachers', compact('teachers'));
     }
 
-    public function show(User $teacher)
+    public function show($id)
     {
+        // Resolve by id explicitly to avoid implicit binding issues with route parameter names
+        $teacher = User::findOrFail($id);
+
+        // Log the teacher payload for debugging (can be removed later)
+        \Log::info('TeacherController@show payload', $teacher->toArray());
+
         return response()->json($teacher);
     }
 
@@ -49,9 +55,10 @@ class TeacherController extends Controller
             'phone' => 'nullable|string|max:20',
             'status' => 'required|in:active,inactive',
             'specialties' => 'nullable|string|max:500',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $validated['password'] = Hash::make('password123'); // Default password
+        $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'teacher';
 
         User::create($validated);
@@ -59,8 +66,10 @@ class TeacherController extends Controller
         return redirect()->route('docentes.index')->with('success', 'Docente creado exitosamente.');
     }
 
-    public function update(Request $request, User $teacher)
+    public function update(Request $request, $id)
     {
+        $teacher = User::findOrFail($id);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($teacher->id)],
@@ -69,7 +78,15 @@ class TeacherController extends Controller
             'phone' => 'nullable|string|max:20',
             'status' => 'required|in:active,inactive',
             'specialties' => 'nullable|string|max:500',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
+
+        // Only update password if provided
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
 
         $teacher->update($validated);
 

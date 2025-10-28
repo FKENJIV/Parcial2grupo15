@@ -1,10 +1,10 @@
 @props([])
 
-<div id="teacherModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+<div id="teacherModal" class="fixed inset-0 bg-indigo-900 bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="relative max-w-2xl w-full mx-4">
         <!-- Soft decorative blur -->
         <div aria-hidden class="absolute -inset-6 rounded-2xl bg-indigo-100 opacity-20 blur-[40px] pointer-events-none"></div>
-        <div aria-hidden class="absolute -inset-2 rounded-2xl bg-black opacity-4 blur-[24px] pointer-events-none"></div>
+    <div aria-hidden class="absolute -inset-2 rounded-2xl bg-indigo-900 opacity-6 blur-[24px] pointer-events-none"></div>
 
         <div class="relative bg-white rounded-xl shadow-[0_30px_80px_rgba(2,6,23,0.12)] border-2 border-indigo-200 ring-1 ring-indigo-50 overflow-hidden transform transition-all duration-300 scale-95 opacity-0 hidden" id="modalContent">
             <!-- Header -->
@@ -36,24 +36,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Nombre Completo</label>
-                        <input type="text" name="name" required placeholder="Ej: Juan Pérez" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="name" required placeholder="Ej: Juan Pérez" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Email</label>
-                        <input type="email" name="email" required placeholder="email@universidad.edu" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="email" name="email" required placeholder="email@universidad.edu" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Código de Docente</label>
-                        <input type="text" name="code" required placeholder="DOC-001" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="code" required placeholder="DOC-001" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Tipo de Docente</label>
-                        <select name="type" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                        <select name="type" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                             <option value="">Seleccionar tipo...</option>
                             <option value="titular">Docente Titular</option>
                             <option value="invitado">Docente Invitado</option>
@@ -64,13 +64,26 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Contraseña <span id="passwordRequiredLabel" class="text-red-600">*</span></label>
+                        <input type="password" name="password" id="passwordField" placeholder="Mínimo 8 caracteres" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
+                        <p class="text-xs text-gray-500 mt-1" id="passwordHint">Requerido al crear. Dejar vacío si no desea cambiarla al editar.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Confirmar Contraseña <span id="passwordConfirmRequiredLabel" class="text-red-600">*</span></label>
+                        <input type="password" name="password_confirmation" id="passwordConfirmField" placeholder="Confirmar contraseña" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Teléfono</label>
-                        <input type="text" name="phone" placeholder="+591 12345678" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white" />
+                        <input type="text" name="phone" placeholder="+591 12345678" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
-                        <select name="status" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white">
+                        <select name="status" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
                             <option value="active" selected>Activo</option>
                             <option value="inactive">Inactivo</option>
                         </select>
@@ -79,7 +92,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Especialidades</label>
-                    <textarea name="specialties" rows="3" placeholder="Ej: Programación, Base de Datos, Sistemas de Información" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white"></textarea>
+                    <textarea name="specialties" rows="3" placeholder="Ej: Programación, Base de Datos, Sistemas de Información" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800"></textarea>
                 </div>
 
                 <!-- Actions -->
@@ -123,23 +136,44 @@ function openTeacherModal(isEdit = false, teacherId = null) {
         modalTitle.textContent = 'Editar Docente';
         submitButtonText.textContent = 'Actualizar Docente';
         
-        // Fetch teacher data and populate form
-        fetch(`/docentes/${teacherId}`)
-            .then(response => response.json())
+        // Password is optional when editing
+        document.getElementById('passwordField').removeAttribute('required');
+        document.getElementById('passwordConfirmField').removeAttribute('required');
+        document.getElementById('passwordRequiredLabel').classList.add('hidden');
+        document.getElementById('passwordConfirmRequiredLabel').classList.add('hidden');
+        
+        // Fetch teacher data and populate form (use same-origin credentials and accept JSON)
+        fetch(`/docentes/${teacherId}`, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'include'
+        })
+            .then(response => {
+                console.log('docentes.show response status:', response.status);
+                const contentType = response.headers.get('content-type') || '';
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!contentType.includes('application/json')) {
+                    return response.text().then(text => {
+                        console.error('Expected JSON but received:', text);
+                        throw new Error('Invalid JSON response');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
-                form.querySelector('[name="name"]').value = data.name || '';
-                form.querySelector('[name="email"]').value = data.email || '';
-                form.querySelector('[name="code"]').value = data.code || '';
-                form.querySelector('[name="phone"]').value = data.phone || '';
-                form.querySelector('[name="type"]').value = data.type || '';
-                form.querySelector('[name="status"]').value = data.status || 'active';
-                form.querySelector('[name="specialties"]').value = data.specialties || '';
+                console.log('docentes.show JSON payload:', data);
+                form.querySelector('[name="name"]').value = data.name ?? '';
+                form.querySelector('[name="email"]').value = data.email ?? '';
+                form.querySelector('[name="code"]').value = data.code ?? '';
+                form.querySelector('[name="phone"]').value = data.phone ?? '';
+                form.querySelector('[name="type"]').value = data.type ?? '';
+                form.querySelector('[name="status"]').value = data.status ?? 'active';
+                form.querySelector('[name="specialties"]').value = data.specialties ?? '';
                 form.action = `/docentes/${teacherId}`;
                 form.querySelector('input[name="_method"]').value = 'PUT';
             })
             .catch(error => {
                 console.error('Error loading teacher data:', error);
-                alert('Error al cargar los datos del docente');
+                alert('Error al cargar los datos del docente. Comprueba que estás autenticado.');
             });
     } else {
         // Reset form for new teacher
@@ -149,6 +183,12 @@ function openTeacherModal(isEdit = false, teacherId = null) {
         form.action = '/docentes';
         form.querySelector('input[name="_method"]').value = 'POST';
         form.querySelector('[name="status"]').value = 'active';
+        
+        // Password is required when creating
+        document.getElementById('passwordField').setAttribute('required', 'required');
+        document.getElementById('passwordConfirmField').setAttribute('required', 'required');
+        document.getElementById('passwordRequiredLabel').classList.remove('hidden');
+        document.getElementById('passwordConfirmRequiredLabel').classList.remove('hidden');
     }
 }
 
@@ -194,9 +234,31 @@ document.getElementById('teacherForm').addEventListener('submit', function(e) {
         isValid = false;
     }
 
+    // Password validation
+    const passwordField = this.querySelector('[name="password"]');
+    const passwordConfirmField = this.querySelector('[name="password_confirmation"]');
+    
+    if (passwordField.value || passwordConfirmField.value) {
+        if (passwordField.value.length < 8) {
+            passwordField.classList.add('border-red-300', 'focus:border-red-400', 'focus:ring-red-300');
+            isValid = false;
+            if (!passwordField.value) {
+                alert('La contraseña debe tener al menos 8 caracteres.');
+            }
+        }
+        
+        if (passwordField.value !== passwordConfirmField.value) {
+            passwordConfirmField.classList.add('border-red-300', 'focus:border-red-400', 'focus:ring-red-300');
+            isValid = false;
+            alert('Las contraseñas no coinciden.');
+        }
+    }
+
     if (!isValid) {
         e.preventDefault();
-        alert('Por favor complete todos los campos requeridos correctamente.');
+        if (this.querySelectorAll('[required]').length > 0) {
+            alert('Por favor complete todos los campos requeridos correctamente.');
+        }
     }
 });
 </script>

@@ -3,31 +3,41 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-white dark:bg-indigo-900">
+        <flux:sidebar sticky stashable class="border-e border-indigo-200 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ in_array(auth()->user()->role, ['teacher', 'docente']) ? route('teacher.dashboard') : route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Menu')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                    <flux:navlist.item icon="calendar" :href="route('horarios')" :current="request()->routeIs('horarios')" wire:navigate>{{ __('Ver Horarios') }}</flux:navlist.item>
-                    <flux:navlist.item icon="bolt" :href="route('administrar.carga')" :current="request()->routeIs('administrar.carga')" wire:navigate>{{ __('Administrar Carga') }}</flux:navlist.item>
-                    <flux:navlist.item icon="clock" :href="route('registro.asistencia')" :current="request()->routeIs('registro.asistencia')" wire:navigate>{{ __('Registro Asistencia') }}</flux:navlist.item>
-                    <flux:navlist.item icon="users" :href="route('docentes.index')" :current="request()->routeIs('docentes.index')" wire:navigate>{{ __('Docentes') }}</flux:navlist.item>
+                    @if(in_array(auth()->user()->role, ['teacher', 'docente']))
+                        {{-- Teacher Menu --}}
+                        <flux:navlist.item icon="home" :href="route('teacher.dashboard')" :current="request()->routeIs('teacher.dashboard')" wire:navigate class="text-indigo-700">{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="calendar" :href="route('teacher.schedules')" :current="request()->routeIs('teacher.schedules')" wire:navigate class="text-indigo-700">{{ __('Mis Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="users" :href="route('teacher.groups.create')" :current="request()->routeIs('teacher.groups.create')" wire:navigate class="text-indigo-700">{{ __('Crear Grupo') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clock" :href="route('teacher.attendance')" :current="request()->routeIs('teacher.attendance')" wire:navigate class="text-indigo-700">{{ __('Registrar Asistencia') }}</flux:navlist.item>
+                    @else
+                        {{-- Admin/Superuser Menu --}}
+                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="text-indigo-700">{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="calendar" :href="route('horarios')" :current="request()->routeIs('horarios')" wire:navigate class="text-indigo-700">{{ __('Ver Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="cog" :href="route('admin.schedules.index')" :current="request()->routeIs('admin.schedules.*')" wire:navigate class="text-indigo-700">{{ __('Gestionar Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="bolt" :href="route('administrar.carga')" :current="request()->routeIs('administrar.carga')" wire:navigate class="text-indigo-700">{{ __('Administrar Carga') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clock" :href="route('registro.asistencia')" :current="request()->routeIs('registro.asistencia')" wire:navigate class="text-indigo-700">{{ __('Registro Asistencia') }}</flux:navlist.item>
+                        <flux:navlist.item icon="users" :href="route('docentes.index')" :current="request()->routeIs('docentes.index')" wire:navigate class="text-indigo-700">{{ __('Docentes') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
             <!-- Desktop User Panel (always visible) -->
-            <div class="px-4 pb-4 hidden lg:block">
-                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
+                <div class="px-4 pb-4 hidden lg:block">
+                <div class="rounded-lg border border-indigo-200 bg-white p-3 dark:border-indigo-700 dark:bg-indigo-900">
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center font-semibold">{{ auth()->user()->initials() }}</div>
+                        <div class="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center font-semibold text-indigo-700">{{ auth()->user()->initials() }}</div>
                         <div class="flex-1 text-sm">
                             <div class="font-semibold truncate">{{ auth()->user()->name }}</div>
                             <div class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</div>
@@ -36,7 +46,7 @@
                     <div class="mt-3">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <flux:button type="submit" variant="ghost" class="w-full">{{ __('Cerrar sesión') }}</flux:button>
+                            <flux:button type="submit" variant="ghost" class="w-full text-indigo-700">{{ __('Cerrar sesión') }}</flux:button>
                         </form>
                     </div>
                 </div>
