@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
+    <body class="min-h-screen bg-white antialiased" style="background-color: #ffffff;">
         <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div class="flex w-full max-w-sm flex-col gap-2">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
@@ -17,6 +17,20 @@
                 </div>
             </div>
         </div>
+        {{-- Ensure no runtime script forces dark mode on auth pages: remove any `dark` class and force white bg --}}
+        <script>
+            try {
+                // Remove any 'dark' class that client JS might add
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+                // Force background white to avoid Tailwind dark variants
+                document.body.style.backgroundColor = '#ffffff';
+            } catch (e) {
+                // ignore in environments where DOM isn't available
+                console && console.debug && console.debug('theme cleanup', e);
+            }
+        </script>
+
         @fluxScripts
     </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
@@ -12,24 +12,37 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
+                <flux:navlist.group :heading="__('Menu')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="calendar" :href="route('horarios')" :current="request()->routeIs('horarios')" wire:navigate>{{ __('Ver Horarios') }}</flux:navlist.item>
+                    <flux:navlist.item icon="bolt" :href="route('administrar.carga')" :current="request()->routeIs('administrar.carga')" wire:navigate>{{ __('Administrar Carga') }}</flux:navlist.item>
+                    <flux:navlist.item icon="clock" :href="route('registro.asistencia')" :current="request()->routeIs('registro.asistencia')" wire:navigate>{{ __('Registro Asistencia') }}</flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('docentes.index')" :current="request()->routeIs('docentes.index')" wire:navigate>{{ __('Docentes') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
+            <!-- Desktop User Panel (always visible) -->
+            <div class="px-4 pb-4 hidden lg:block">
+                <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center font-semibold">{{ auth()->user()->initials() }}</div>
+                        <div class="flex-1 text-sm">
+                            <div class="font-semibold truncate">{{ auth()->user()->name }}</div>
+                            <div class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <flux:button type="submit" variant="ghost" class="w-full">{{ __('Cerrar sesión') }}</flux:button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
-
-            <!-- Desktop User Menu -->
+            <!-- Desktop User Menu (fallback) -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
                 <flux:profile
                     :name="auth()->user()->name"

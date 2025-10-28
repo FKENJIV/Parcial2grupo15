@@ -26,6 +26,11 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'code',
+        'type',
+        'phone',
+        'status',
+        'specialties',
         'api_token',
         'api_token_expires_at',
     ];
