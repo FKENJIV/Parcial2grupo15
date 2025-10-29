@@ -4,21 +4,7 @@
 ### - la imagen final ejecuta la aplicación usando el servidor integrado de PHP (se enlaza a $PORT)
 
 ############################################################
-# Etapa node: construir assets frontend (Vite)
-############################################################
-FROM node:20-bullseye as node_builder
-WORKDIR /app
-
-# Copiar los archivos de package primero para acelerar la caché de npm install
-COPY package*.json ./
-RUN npm ci --silent
-
-# Copiar el resto de la aplicación y construir los assets
-COPY . .
-RUN npm run build
-
-############################################################
-# Etapa composer: instalar dependencias PHP
+# Etapa composer: instalar dependencias PHP (genera /app/vendor)
 ############################################################
 FROM php:8.3-cli-bullseye as composer_builder
 WORKDIR /app
@@ -32,14 +18,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && docker-php-ext-install pdo pdo_pgsql zip \
  && rm -rf /var/lib/apt/lists/*
 
-# Copiar archivos de la aplicación desde la etapa node (incluye los assets construidos)
-COPY --from=node_builder /app /app
+# Copiar sólo el composer.json/composer.lock para aprovechar la cache de Docker
+COPY composer.json composer.lock* ./
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar dependencias PHP (producción)
+# Instalar dependencias PHP (producción) y generar vendor
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+############################################################
+# Etapa node: construir assets frontend (Vite)
+# Copiamos vendor desde composer_builder para que imports como
+# '../../vendor/livewire/flux/dist/flux.css' resuelvan correctamente.
+############################################################
+FROM node:20-bullseye as node_builder
+WORKDIR /app
+
+# Copiar los archivos de package primero para acelerar la caché de npm install
+COPY package*.json ./
+RUN npm ci --silent
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Copiar vendor generado por composer_builder (necesario para imports en CSS)
+COPY --from=composer_builder /app/vendor ./vendor
+
+# Construir los assets con Vite
+RUN npm run build
 
 ############################################################
 # Imagen final: runtime PHP
@@ -55,9 +62,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && docker-php-ext-install pdo pdo_pgsql zip \
  && rm -rf /var/lib/apt/lists/*
 
-# Copiar la aplicación (con vendor) y los assets públicos construidos
-COPY --from=composer_builder /app /var/www/html
-COPY --from=node_builder /app/public /var/www/html/public
+# Copiar la aplicación (ya incluye vendor y assets construidos)
+COPY --from=node_builder /app /var/www/html
 
 # Asegurar que los directorios storage y bootstrap/cache son escribibles por el proceso web
 RUN mkdir -p storage bootstrap/cache \
