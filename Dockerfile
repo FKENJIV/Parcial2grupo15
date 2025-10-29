@@ -51,6 +51,5 @@ EXPOSE 80
 # Start Apache and run migrations
 CMD php artisan config:cache && \
     php artisan route:cache && \
-    php artisan view:cache && \
     php artisan migrate --force && \
     apache2-foreground
