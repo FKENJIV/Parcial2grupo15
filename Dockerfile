@@ -28,14 +28,19 @@ COPY --from=node_builder /app/public /var/www/html/public
 # Copy rest of the app
 COPY . .
 
-# Copy scripts to /scripts/ where the entrypoint expects them
-RUN mkdir -p /scripts \
- && cp -r scripts/* /scripts/ || true \
- && chmod +x /scripts/*.sh || true
+# Ensure proper permissions for Laravel
+RUN chown -R nginx:nginx /var/www/html \
+ && chmod -R 755 /var/www/html/storage \
+ && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copy nginx conf
-RUN mkdir -p /etc/nginx/sites-available \
- && cp conf/nginx/nginx-site.conf /etc/nginx/sites-available/default.conf || true
+# Copy scripts to /scripts/ where the entrypoint expects them
+COPY scripts/00-laravel-deploy.sh /scripts/00-laravel-deploy.sh
+RUN chmod +x /scripts/00-laravel-deploy.sh
+
+# Copy nginx conf and remove default
+RUN rm -f /etc/nginx/sites-enabled/default \
+ && cp conf/nginx/nginx-site.conf /etc/nginx/sites-available/default.conf \
+ && ln -sf /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 ENV SKIP_COMPOSER 1
 ENV WEBROOT /var/www/html/public
