@@ -48,7 +48,13 @@ COPY . .
 COPY --from=composer_builder /app/vendor ./vendor
 
 # Construir los assets con Vite
-RUN npm run build
+# Si Vite colocó la salida en 'dist' (o en otra carpeta), copiarla a 'public/build'
+# y listar el contenido para diagnóstico en los logs de build.
+RUN npm run build \
+ && if [ -d dist ]; then mkdir -p public/build && cp -r dist/* public/build/; fi \
+ && if [ -d build ]; then mkdir -p public/build && cp -r build/* public/build/; fi \
+ && echo "--- public/build contents ---" \
+ && ls -la public/build || true
 
 ############################################################
 # Imagen final: runtime PHP
