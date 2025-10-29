@@ -33,7 +33,9 @@ COPY --from=composer_builder /app/vendor ./vendor
 
 # Compilar los assets de Vite
 RUN npm run build \
- && echo "--- public/build contents ---" && ls -la public/build
+ && echo "--- public/build contents ---" && ls -la public/build \
+ && if [ ! -f public/build/manifest.json ]; then echo "ERROR: manifest.json not found!"; exit 1; fi \
+ && echo "✓ manifest.json generated successfully"
 
 ############################################################
 # Imagen final: runtime PHP
