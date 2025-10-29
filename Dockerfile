@@ -1,14 +1,15 @@
-# Stage 1: build assets with Node 20 (required for Vite 7 and laravel-vite-plugin 2.0)
+# Stage 1: Install PHP dependencies (for vendor/livewire/flux CSS)
+FROM composer:latest AS php_dependencies
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
+# Stage 2: Build assets with Node 20 (required for Vite 7 and laravel-vite-plugin 2.0)
 FROM node:20 AS node_builder
 WORKDIR /app
 
-# Install composer and dependencies to get vendor files (needed for Flux CSS)
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN apt-get update && apt-get install -y git unzip && rm -rf /var/lib/apt/lists/*
-
-# Copy composer files and install PHP dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+# Copy vendor from PHP stage (needed for Flux CSS reference)
+COPY --from=php_dependencies /app/vendor ./vendor
 
 # Copy package manifests and install
 COPY package*.json ./
@@ -16,13 +17,12 @@ RUN npm ci
 
 # Copy source and build assets
 COPY . .
-RUN composer dump-autoload --optimize --no-dev
 RUN npm run build
 
-# Stage 2: final image (nginx + php-fpm)
+# Stage 3: final image (nginx + php-fpm)
 FROM richarvey/nginx-php-fpm:3.1.6
 
-# Copy compiled assets from node builder (ajusta la ruta si Vite genera en otra carpeta)
+# Copy compiled assets from node builder
 COPY --from=node_builder /app/public /var/www/html/public
 
 # Copy rest of the app
