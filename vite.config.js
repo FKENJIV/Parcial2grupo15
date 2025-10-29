@@ -15,4 +15,9 @@ export default defineConfig({
     server: {
         cors: true,
     },
+    build: {
+        outDir: 'public/build', // 👈 Carpeta donde Laravel busca los assets
+        manifest: true,         // 👈 Genera el archivo manifest.json
+        emptyOutDir: true,      // Limpia antes de cada build
+    },
 });
