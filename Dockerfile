@@ -1,6 +1,14 @@
-# Stage 1: build assets with Node LTS
-FROM node:18 AS node_builder
+# Stage 1: build assets with Node 20 (required for Vite 7 and laravel-vite-plugin 2.0)
+FROM node:20 AS node_builder
 WORKDIR /app
+
+# Install composer and dependencies to get vendor files (needed for Flux CSS)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN apt-get update && apt-get install -y git unzip && rm -rf /var/lib/apt/lists/*
+
+# Copy composer files and install PHP dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
 # Copy package manifests and install
 COPY package*.json ./
@@ -8,6 +16,7 @@ RUN npm ci
 
 # Copy source and build assets
 COPY . .
+RUN composer dump-autoload --optimize --no-dev
 RUN npm run build
 
 # Stage 2: final image (nginx + php-fpm)
