@@ -1,5 +1,8 @@
 FROM richarvey/nginx-php-fpm:3.1.6
 
+# Install Node.js and npm for Vite
+RUN apk add --no-cache nodejs npm
+
 COPY . .
 
 # Image config
