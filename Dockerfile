@@ -33,10 +33,7 @@ COPY --from=composer_builder /app/vendor ./vendor
 
 # Compilar los assets de Vite
 RUN npm run build \
- && mkdir -p public/build \
- && cp -r build/* public/build/ 2>/dev/null || true \
- && cp -r dist/* public/build/ 2>/dev/null || true \
- && echo "--- public/build contents ---" && ls -la public/build || true
+ && echo "--- public/build contents ---" && ls -la public/build
 
 ############################################################
 # Imagen final: runtime PHP
