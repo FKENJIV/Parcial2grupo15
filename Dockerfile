@@ -18,8 +18,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && docker-php-ext-install pdo pdo_pgsql zip \
  && rm -rf /var/lib/apt/lists/*
 
-# Copiar sólo el composer.json/composer.lock para aprovechar la cache de Docker
-COPY composer.json composer.lock* ./
+# Copiar la aplicación completa para que los scripts de Composer (ej. artisan) estén disponibles
+# Nota: esto invalida un poco la cache de Docker, pero garantiza que
+# "@php artisan package:discover" pueda ejecutarse durante composer install.
+COPY . ./
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
