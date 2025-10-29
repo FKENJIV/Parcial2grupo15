@@ -26,7 +26,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Materia / Asignatura *</label>
-                    <input type="text" name="subject" required placeholder="Ej: Sistemas de Información 1" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                    <select name="subject_id" required class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Seleccionar materia...</option>
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject->id }}">{{ $subject->name }} ({{ $subject->code }})</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Si no encuentras la materia, contacta al administrador</p>
                 </div>
 
                 <div>

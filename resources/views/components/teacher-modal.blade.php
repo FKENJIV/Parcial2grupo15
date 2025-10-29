@@ -1,14 +1,22 @@
-@props([])
+@props(['subjects' => []])
 
 <div id="teacherModal" class="fixed inset-0 bg-indigo-900 bg-opacity-40 flex items-center justify-center z-50 hidden">
-    <div class="relative max-w-2xl w-full mx-4">
+    <!--
+        Responsive container notes:
+        - mx-2 on very small screens to avoid edge clipping
+        - max-w-[90vw] to ensure it fits on narrow viewports
+    -->
+    <div class="relative w-full max-w-[90vw] sm:max-w-2xl mx-2 sm:mx-4">
         <!-- Soft decorative blur -->
         <div aria-hidden class="absolute -inset-6 rounded-2xl bg-indigo-100 opacity-20 blur-[40px] pointer-events-none"></div>
     <div aria-hidden class="absolute -inset-2 rounded-2xl bg-indigo-900 opacity-6 blur-[24px] pointer-events-none"></div>
 
-        <div class="relative bg-white rounded-xl shadow-[0_30px_80px_rgba(2,6,23,0.12)] border-2 border-indigo-200 ring-1 ring-indigo-50 overflow-hidden transform transition-all duration-300 scale-95 opacity-0 hidden" id="modalContent">
+        <div id="modalContent" class="relative bg-white shadow-[0_30px_80px_rgba(2,6,23,0.12)] border-2 border-indigo-200 ring-1 ring-indigo-50 transform transition-all duration-300 scale-95 opacity-0 hidden
+            rounded-none sm:rounded-xl
+            max-h-[90vh] overflow-auto
+            ">
             <!-- Header -->
-            <div class="px-6 py-4 border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-white">
+            <div class="px-4 sm:px-6 py-4 border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-white">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-white shadow-md">
@@ -29,7 +37,7 @@
             </div>
 
             <!-- Form -->
-            <form id="teacherForm" class="p-6 space-y-6" method="POST" action="/docentes">
+            <form id="teacherForm" class="p-4 sm:p-6 space-y-6" method="POST" action="/docentes">
                 @csrf
                 <input type="hidden" name="_method" value="POST">
 
@@ -91,12 +99,44 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">Especialidades</label>
-                    <textarea name="specialties" rows="3" placeholder="Ej: Programación, Base de Datos, Sistemas de Información" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800"></textarea>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Especialidades (Materias)</label>
+                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 max-h-48 overflow-y-auto space-y-2">
+                        @foreach($subjects ?? [] as $subject)
+                            <label class="flex items-center gap-2 p-2 hover:bg-white rounded cursor-pointer transition-colors">
+                                <input type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-gray-700">{{ $subject->name }} ({{ $subject->code }})</span>
+                            </label>
+                        @endforeach
+                        @if(empty($subjects) || count($subjects) == 0)
+                            <p class="text-xs text-gray-400 italic">No hay materias disponibles</p>
+                        @endif
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Selecciona las materias en las que el docente se especializa</p>
+                </div>
+
+                <!-- Add new subject inline -->
+                    <div id="newSubjectSection" class="border-t border-gray-100 pt-4">
+                    <button type="button" onclick="toggleNewSubject()" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span id="newSubjectToggleText">Agregar nueva materia</span>
+                    </button>
+                    <div id="newSubjectFields" class="hidden mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Nombre de la Materia</label>
+                            <input type="text" name="new_subject_name" placeholder="Ej: Cálculo I" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Código</label>
+                            <input type="text" name="new_subject_code" placeholder="Ej: MAT-101" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
+                        </div>
+                        <p class="col-span-full text-xs text-indigo-600">Esta nueva materia se agregará automáticamente a las especialidades del docente</p>
+                    </div>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex gap-3 pt-4 border-t border-gray-100">
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
                     <button type="submit" class="flex-1 px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
                         <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -116,6 +156,21 @@
 </div>
 
 <script>
+function toggleNewSubject() {
+    const fields = document.getElementById('newSubjectFields');
+    const toggleText = document.getElementById('newSubjectToggleText');
+    if (fields.classList.contains('hidden')) {
+        fields.classList.remove('hidden');
+        toggleText.textContent = 'Cancelar nueva materia';
+    } else {
+        fields.classList.add('hidden');
+        toggleText.textContent = 'Agregar nueva materia';
+        // Clear fields
+        document.querySelector('[name="new_subject_name"]').value = '';
+        document.querySelector('[name="new_subject_code"]').value = '';
+    }
+}
+
 function openTeacherModal(isEdit = false, teacherId = null) {
     const modal = document.getElementById('teacherModal');
     const modalContent = document.getElementById('modalContent');
@@ -130,6 +185,10 @@ function openTeacherModal(isEdit = false, teacherId = null) {
         modalContent.classList.remove('hidden', 'scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
     }, 10);
+
+    // Reset new subject section
+    document.getElementById('newSubjectFields').classList.add('hidden');
+    document.getElementById('newSubjectToggleText').textContent = 'Agregar nueva materia';
 
     // If editing, load teacher data
     if (isEdit && teacherId) {
@@ -167,7 +226,20 @@ function openTeacherModal(isEdit = false, teacherId = null) {
                 form.querySelector('[name="phone"]').value = data.phone ?? '';
                 form.querySelector('[name="type"]').value = data.type ?? '';
                 form.querySelector('[name="status"]').value = data.status ?? 'active';
-                form.querySelector('[name="specialties"]').value = data.specialties ?? '';
+                
+                // Uncheck all subjects first
+                document.querySelectorAll('[name="subject_ids[]"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Check the subjects assigned to this teacher
+                if (data.subjects && data.subjects.length > 0) {
+                    data.subjects.forEach(subject => {
+                        const checkbox = document.querySelector(`[name="subject_ids[]"][value="${subject.id}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+                
                 form.action = `/docentes/${teacherId}`;
                 form.querySelector('input[name="_method"]').value = 'PUT';
             })
@@ -183,6 +255,11 @@ function openTeacherModal(isEdit = false, teacherId = null) {
         form.action = '/docentes';
         form.querySelector('input[name="_method"]').value = 'POST';
         form.querySelector('[name="status"]').value = 'active';
+        
+        // Uncheck all subjects
+        document.querySelectorAll('[name="subject_ids[]"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
         
         // Password is required when creating
         document.getElementById('passwordField').setAttribute('required', 'required');

@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Group;
+use App\Models\Subject;
 
 class User extends Authenticatable
 {
@@ -79,5 +81,14 @@ class User extends Authenticatable
     public function groups(): HasMany
     {
         return $this->hasMany(Group::class, 'teacher_id');
+    }
+
+    /**
+     * Teacher's subject specialties (many-to-many)
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'subject_user')
+            ->withTimestamps();
     }
 }

@@ -6,32 +6,57 @@
     </div>
 
     <!-- Search and Filters -->
-    <section class="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+    <form method="GET" action="{{ route('docentes.index') }}" class="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-2">Buscar docente</label>
-                <input type="text" placeholder="Nombre, email o código..." class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Nombre, email o código..." class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800" />
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
-                <select class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
-                    <option value="all">Todos</option>
-                    <option value="active">Activos</option>
-                    <option value="inactive">Inactivos</option>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Tipo</label>
+                <select name="type" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
+                    <option value="">Todos los tipos</option>
+                    <option value="titular" {{ request('type') == 'titular' ? 'selected' : '' }}>Titular</option>
+                    <option value="invitado" {{ request('type') == 'invitado' ? 'selected' : '' }}>Invitado</option>
+                    <option value="auxiliar" {{ request('type') == 'auxiliar' ? 'selected' : '' }}>Auxiliar</option>
                 </select>
             </div>
 
             <div>
-                <button class="w-full px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
+                <label class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
+                <select name="status" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
+                    <option value="">Todos los estados</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Activos</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactivos</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Especialidad</label>
+                <select name="subject_id" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
+                    <option value="">Todas las materias</option>
+                    @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>
+                            {{ $subject->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
                     <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     Buscar
                 </button>
+                <a href="{{ route('docentes.index') }}" class="px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors">
+                    Limpiar
+                </a>
             </div>
         </div>
-    </section>
+    </form>
 
     <!-- Teachers List -->
     <section class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
@@ -52,6 +77,7 @@
                         <th class="pb-3 text-sm font-semibold text-gray-700">Docente</th>
                         <th class="pb-3 text-sm font-semibold text-gray-700">Email</th>
                         <th class="pb-3 text-sm font-semibold text-gray-700">Código</th>
+                        <th class="pb-3 text-sm font-semibold text-gray-700">Especialidades</th>
                         <th class="pb-3 text-sm font-semibold text-gray-700">Estado</th>
                         <th class="pb-3 text-sm font-semibold text-gray-700">Acciones</th>
                     </tr>
@@ -72,6 +98,24 @@
                         </td>
                         <td class="py-4 text-sm text-gray-600">{{ $teacher->email }}</td>
                         <td class="py-4 text-sm text-gray-600">{{ $teacher->code ?? 'DOC-' . str_pad($teacher->id, 3, '0', STR_PAD_LEFT) }}</td>
+                        <td class="py-4">
+                            @if($teacher->subjects->count() > 0)
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach($teacher->subjects->take(3) as $subject)
+                                        <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                                            {{ $subject->code }}
+                                        </span>
+                                    @endforeach
+                                    @if($teacher->subjects->count() > 3)
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                                            +{{ $teacher->subjects->count() - 3 }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400 italic">Sin especialidades</span>
+                            @endif
+                        </td>
                         <td class="py-4">
                             @if($teacher->status ?? 'active' === 'active')
                                 <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full">Activo</span>
@@ -134,72 +178,12 @@
     </section>
 
     <!-- Add/Edit Teacher Modal -->
-    <x-teacher-modal />
+    <x-teacher-modal :subjects="$subjects" />
 
     <script>
-        function openTeacherModal(edit = false, teacherId = null) {
-            const modal = document.getElementById('teacherModal');
-            const modalContent = document.getElementById('modalContent');
-            const form = document.getElementById('teacherForm');
-            const modalTitle = document.getElementById('modalTitle');
-            const submitButtonText = document.getElementById('submitButtonText');
-
-            modal.classList.remove('hidden');
-
-            // Trigger animation
-            setTimeout(() => {
-                modalContent.classList.remove('hidden', 'scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-
-            // If editing, load teacher data
-            if (edit && teacherId) {
-                modalTitle.textContent = 'Editar Docente';
-                submitButtonText.textContent = 'Actualizar Docente';
-
-                // Fetch teacher data and populate form (use same-origin credentials and accept JSON)
-                fetch(`/docentes/${teacherId}`, {
-                    headers: { 'Accept': 'application/json' },
-                    credentials: 'include'
-                })
-                    .then(response => {
-                        console.log('docentes.show response status:', response.status);
-                        const contentType = response.headers.get('content-type') || '';
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        if (!contentType.includes('application/json')) {
-                            return response.text().then(text => {
-                                console.error('Expected JSON but received:', text);
-                                throw new Error('Invalid JSON response');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('docentes.show JSON payload:', data);
-                        form.querySelector('[name="name"]').value = data.name ?? '';
-                        form.querySelector('[name="email"]').value = data.email ?? '';
-                        form.querySelector('[name="code"]').value = data.code ?? '';
-                        form.querySelector('[name="phone"]').value = data.phone ?? '';
-                        form.querySelector('[name="type"]').value = data.type ?? '';
-                        form.querySelector('[name="status"]').value = data.status ?? 'active';
-                        form.querySelector('[name="specialties"]').value = data.specialties ?? '';
-                        form.action = `/docentes/${teacherId}`;
-                        form.querySelector('input[name="_method"]').value = 'PUT';
-                    })
-                    .catch(error => {
-                        console.error('Error loading teacher data:', error);
-                        alert('Error al cargar los datos del docente. Comprueba que estás autenticado.');
-                    });
-            } else {
-                // Reset form for new teacher
-                modalTitle.textContent = 'Nuevo Docente';
-                submitButtonText.textContent = 'Crear Docente';
-                form.reset();
-                form.action = '/docentes';
-                form.querySelector('input[name="_method"]').value = 'POST';
-                form.querySelector('[name="status"]').value = 'active';
-            }
-        }
+        // The teacher modal and its JS (open/close/fill/validation) are provided by the
+        // `x-teacher-modal` component. Here we only keep helper functions not provided
+        // by the component (delete confirmation).
 
         function confirmDelete(teacherId, teacherName) {
             if (confirm(`¿Estás seguro de que deseas dar de baja al docente "${teacherName}"?`)) {

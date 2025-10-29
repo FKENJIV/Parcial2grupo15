@@ -16,22 +16,22 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $today = strtolower(Carbon::now()->format('l')); // 'monday', 'tuesday', etc.
+        $today = Carbon::now()->format('D'); // 'Mon', 'Tue', 'Wed', etc.
         $currentHour = Carbon::now()->hour;
 
         // Get today's schedules for the authenticated teacher
         $todaySchedules = Schedule::whereHas('group', function ($query) {
                 $query->where('teacher_id', auth()->id());
             })
-            ->where('day', $today)
+            ->where('day_of_week', $today)
             ->with('group')
-            ->orderBy('time_block')
+            ->orderBy('start_time')
             ->get();
 
         // Get attendance history
         $attendances = Attendance::where('teacher_id', auth()->id())
             ->with('schedule.group')
-            ->orderBy('attended_at', 'desc')
+            ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 
@@ -39,11 +39,11 @@ class AttendanceController extends Controller
         $stats = [
             'classes_today' => $todaySchedules->count(),
             'attended_today' => Attendance::where('teacher_id', auth()->id())
-                ->whereDate('attended_at', Carbon::today())
+                ->whereDate('created_at', Carbon::today())
                 ->where('status', 'present')
                 ->count(),
             'attended_month' => Attendance::where('teacher_id', auth()->id())
-                ->whereMonth('attended_at', Carbon::now()->month)
+                ->whereMonth('created_at', Carbon::now()->month)
                 ->where('status', 'present')
                 ->count(),
         ];
@@ -71,7 +71,7 @@ class AttendanceController extends Controller
         // Check if attendance already registered today
         $existingAttendance = Attendance::where('schedule_id', $schedule->id)
             ->where('teacher_id', auth()->id())
-            ->whereDate('attended_at', Carbon::today())
+            ->whereDate('created_at', Carbon::today())
             ->first();
 
         if ($existingAttendance) {
@@ -81,7 +81,7 @@ class AttendanceController extends Controller
         Attendance::create([
             'schedule_id' => $schedule->id,
             'teacher_id' => auth()->id(),
-            'attended_at' => Carbon::now(),
+            'group_id' => $schedule->group_id,
             'status' => $validated['status'],
             'notes' => $validated['notes'] ?? null,
         ]);

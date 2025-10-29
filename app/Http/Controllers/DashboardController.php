@@ -17,15 +17,15 @@ class DashboardController extends Controller
         // Total active groups
         $activeGroups = Group::count();
         
-        // Today's attendance records
-        $todayAttendance = Attendance::whereDate('attended_at', Carbon::today())
+        // Today's attendance records (using created_at as the attendance date)
+        $todayAttendance = Attendance::whereDate('created_at', Carbon::today())
             ->where('status', 'present')
             ->count();
         
         // Pending tasks (placeholder - can be customized based on business logic)
         // For now, show count of groups without attendance today
-        $todayDay = strtolower(Carbon::now()->format('l'));
-        $scheduledToday = \App\Models\Schedule::where('day', $todayDay)->count();
+        $todayDay = Carbon::now()->format('D'); // 'Mon', 'Tue', 'Wed', etc.
+        $scheduledToday = \App\Models\Schedule::where('day_of_week', $todayDay)->count();
         $pendingTasks = max(0, $scheduledToday - $todayAttendance);
         
         return view('dashboard', [

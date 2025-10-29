@@ -17,16 +17,16 @@ class DashboardController extends Controller
         // Total groups assigned to this teacher
         $totalGroups = Group::where('teacher_id', $teacherId)->count();
         
-        // Get today's day name in English lowercase (monday, tuesday, etc.)
-        $todayDay = strtolower(Carbon::now()->format('l'));
+        // Get today's day name abbreviated (Mon, Tue, Wed, etc.)
+        $todayDay = Carbon::now()->format('D');
         
         // Get today's classes (schedules for this teacher's groups on current day)
         $todayClasses = Schedule::whereHas('group', function($query) use ($teacherId) {
             $query->where('teacher_id', $teacherId);
         })
-        ->where('day', $todayDay)
+        ->where('day_of_week', $todayDay)
         ->with(['group'])
-        ->orderBy('time_block')
+        ->orderBy('start_time')
         ->get();
         
         // Calculate attendance rate for current month
@@ -35,14 +35,14 @@ class DashboardController extends Controller
         
         // Total scheduled classes this month for this teacher
         $totalClassesThisMonth = Attendance::where('teacher_id', $teacherId)
-            ->whereMonth('attended_at', $currentMonth)
-            ->whereYear('attended_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
             ->count();
         
         // Classes attended (status = 'present')
         $attendedClassesThisMonth = Attendance::where('teacher_id', $teacherId)
-            ->whereMonth('attended_at', $currentMonth)
-            ->whereYear('attended_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
             ->where('status', 'present')
             ->count();
         

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Group;
 use App\Models\Schedule;
+use App\Models\Subject;
 
 class GroupController extends Controller
 {
@@ -14,7 +15,8 @@ class GroupController extends Controller
      */
     public function create()
     {
-        return view('teacher.groups-create');
+        $subjects = Subject::active()->orderBy('name')->get();
+        return view('teacher.groups-create', compact('subjects'));
     }
 
     /**
@@ -23,8 +25,9 @@ class GroupController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'subject' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:groups,code',
+            'subject_id' => 'required|exists:subjects,id',
+            // DB uses `name` as the canonical group identifier; validate uniqueness there
+            'code' => 'required|string|max:50|unique:groups,name',
             'max_students' => 'required|integer|min:1|max:100',
             'classroom' => 'required|string|max:50',
             'schedules' => 'required|array|min:1|max:9', // Mínimo 1, máximo 9 (3 días × 3 horas)
@@ -55,20 +58,35 @@ class GroupController extends Controller
         }
 
         // Create group
+        $subject = Subject::findOrFail($validated['subject_id']);
+        
+        // Map form fields to the actual DB columns. The groups table stores the
+        // canonical identifier in `name` and capacity in `capacity`.
         $group = Group::create([
-            'subject' => $validated['subject'],
-            'code' => $validated['code'],
-            'max_students' => $validated['max_students'],
-            'classroom' => $validated['classroom'],
+            'name' => $validated['code'],
+            'subject' => $subject->name, // Guardar nombre para compatibilidad
+            'subject_id' => $validated['subject_id'],
+            'capacity' => $validated['max_students'],
             'teacher_id' => auth()->id(),
         ]);
+        // Ensure 'name' column is set (DB requires it)
+        if (!$group->name) {
+            $group->name = $validated['code'];
+            $group->save();
+        }
 
         // Create schedules
         foreach ($validated['schedules'] as $schedule) {
+            // Map the teacher-facing schedule shape to DB columns.
+            // Use `day_of_week` and compute start/end times from the integer time_block.
+            $startHour = (int) $schedule['time_block'];
+            $endHour = $startHour + 2; // classes are 2 hours long by convention
+
             Schedule::create([
                 'group_id' => $group->id,
-                'day' => $schedule['day'],
-                'time_block' => $schedule['time_block'],
+                'day_of_week' => $schedule['day'],
+                'start_time' => sprintf('%02d:00:00', $startHour),
+                'end_time' => sprintf('%02d:00:00', $endHour),
             ]);
         }
 

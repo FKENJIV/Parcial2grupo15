@@ -6,34 +6,45 @@
     </div>
 
     <!-- Filters -->
-    <section class="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-2">Periodo</label>
-                <select name="periodo" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
-                    <option value="2025-1" selected>2025-1</option>
-                    <option value="2024-2">2024-2</option>
-                </select>
-            </div>
+    <form method="GET" action="{{ route('horarios') }}" class="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-2">Materia</label>
-                <select name="materia" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
-                    <option value="all">Todas las materias</option>
-                    <option value="si1">Sistemas de Información 1</option>
-                    <option value="bd">Base de Datos</option>
-                    <option value="prog">Programación</option>
+                <select name="subject_id" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
+                    <option value="">Todas las materias</option>
+                    @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>
+                            {{ $subject->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <div>
-                <button class="w-full px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
+                <label class="block text-sm font-medium text-gray-600 mb-2">Docente</label>
+                <select name="teacher_id" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800">
+                    <option value="">Todos los docentes</option>
+                    @foreach($teachers as $teacher)
+                        <option value="{{ $teacher->id }}" {{ request('teacher_id') == $teacher->id ? 'selected' : '' }}>
+                            {{ $teacher->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="w-full px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
                     <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     Filtrar
                 </button>
             </div>
+            <div>
+                <a href="{{ route('horarios') }}" class="block w-full text-center px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors">
+                    Limpiar Filtros
+                </a>
+            </div>
         </div>
-    </section>
+    </form>
 
     <!-- Schedule Cards -->
     @if($groups->isEmpty())

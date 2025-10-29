@@ -7,19 +7,34 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Schedule;
+use App\Models\Subject;
 
 class ScheduleController extends Controller
 {
     /**
      * Display all schedules for admin "Ver Horarios" view
      */
-    public function viewAll()
+    public function viewAll(Request $request)
     {
-        $groups = Group::with(['teacher', 'schedules'])
-            ->orderBy('subject')
-            ->get();
+        $query = Group::with(['teacher', 'schedules', 'subjectModel']);
 
-        return view('schedules', compact('groups'));
+        // Filtro por materia
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
+        }
+
+        // Filtro por docente
+        if ($request->filled('teacher_id')) {
+            $query->where('teacher_id', $request->teacher_id);
+        }
+
+        $groups = $query->orderBy('subject')->get();
+        
+        // Obtener materias y docentes para los filtros
+        $subjects = Subject::active()->orderBy('name')->get();
+        $teachers = User::whereIn('role', ['teacher', 'docente'])->orderBy('name')->get();
+
+        return view('schedules', compact('groups', 'subjects', 'teachers'));
     }
 
     /**
@@ -51,7 +66,8 @@ class ScheduleController extends Controller
     {
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:groups,code,' . $groupId,
+            // use `name` as the unique DB column
+            'code' => 'required|string|max:50|unique:groups,name,' . $groupId,
             'max_students' => 'required|integer|min:1|max:100',
             'classroom' => 'required|string|max:50',
             'schedules' => 'required|array|min:1|max:9',
@@ -81,22 +97,30 @@ class ScheduleController extends Controller
 
         $group = Group::findOrFail($groupId);
         
-        // Update group info
+        // Update group info (map to actual DB columns)
         $group->update([
             'subject' => $validated['subject'],
-            'code' => $validated['code'],
-            'max_students' => $validated['max_students'],
-            'classroom' => $validated['classroom'],
+            'name' => $validated['code'],
+            'capacity' => $validated['max_students'],
         ]);
+        // classroom may not be a DB column; if present, set attribute and save
+        if (array_key_exists('classroom', $validated)) {
+            $group->classroom = $validated['classroom'];
+            $group->save();
+        }
 
         // Delete old schedules and create new ones
         $group->schedules()->delete();
         
         foreach ($validated['schedules'] as $schedule) {
+            $startHour = (int) $schedule['time_block'];
+            $endHour = $startHour + 2; // 2-hour classes by convention
+
             Schedule::create([
                 'group_id' => $group->id,
-                'day' => $schedule['day'],
-                'time_block' => $schedule['time_block'],
+                'day_of_week' => $schedule['day'],
+                'start_time' => sprintf('%02d:00:00', $startHour),
+                'end_time' => sprintf('%02d:00:00', $endHour),
             ]);
         }
 

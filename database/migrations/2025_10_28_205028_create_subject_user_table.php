@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('group_id')->constrained()->onDelete('cascade');
-            $table->string('day'); // 'monday', 'tuesday', etc.
-            $table->integer('time_block'); // 7-21 (hour start)
+        Schema::create('subject_user', function (Blueprint $table) {
+            $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+
+            // Prevent duplicate entries
+            $table->unique(['subject_id', 'user_id']);
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('subject_user');
     }
 };

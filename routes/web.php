@@ -39,8 +39,6 @@ Route::get('teacher/dashboard', [\App\Http\Controllers\Teacher\DashboardControll
 // Application pages used in the UI (protected by auth)
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('horarios', [\App\Http\Controllers\Admin\ScheduleController::class, 'viewAll'])->name('horarios');
-    Route::view('administrar-carga', 'admin-load')->name('administrar.carga');
-    Route::view('registro-asistencia', 'attendance')->name('registro.asistencia');
 
     // Teacher management routes (admin only)
     Route::resource('docentes', TeacherController::class)->names([
@@ -59,6 +57,34 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::get('schedules/{group}/edit', [\App\Http\Controllers\Admin\ScheduleController::class, 'edit'])->name('schedules.edit');
         Route::put('schedules/{group}', [\App\Http\Controllers\Admin\ScheduleController::class, 'update'])->name('schedules.update');
         Route::delete('schedules/{group}', [\App\Http\Controllers\Admin\ScheduleController::class, 'destroy'])->name('schedules.destroy');
+        
+        // Subject management routes
+        Route::get('subjects', [\App\Http\Controllers\Admin\SubjectController::class, 'index'])->name('subjects.index');
+        Route::post('subjects', [\App\Http\Controllers\Admin\SubjectController::class, 'store'])->name('subjects.store');
+    // Quick toggle for active/inactive
+    Route::post('subjects/{subject}/toggle-active', [\App\Http\Controllers\Admin\SubjectController::class, 'toggleActive'])->name('subjects.toggle-active');
+        Route::put('subjects/{subject}', [\App\Http\Controllers\Admin\SubjectController::class, 'update'])->name('subjects.update');
+        Route::delete('subjects/{subject}', [\App\Http\Controllers\Admin\SubjectController::class, 'destroy'])->name('subjects.destroy');
+
+        // Attendance management routes (admin only)
+    Route::get('attendance', [\App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('attendance/create', [\App\Http\Controllers\Admin\AttendanceController::class, 'create'])->name('attendance.create');
+    Route::post('attendance', [\App\Http\Controllers\Admin\AttendanceController::class, 'store'])->name('attendance.store');
+    // AJAX helper to fetch schedules for a teacher must be declared before the
+    // parameterized attendance routes so it doesn't get captured as {attendance}.
+    Route::get('attendance/teacher-schedules', [\App\Http\Controllers\Admin\AttendanceController::class, 'getTeacherSchedules'])->name('attendance.teacher-schedules');
+    Route::get('attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'show'])->name('attendance.show');
+    Route::get('attendance/{attendance}/edit', [\App\Http\Controllers\Admin\AttendanceController::class, 'edit'])->name('attendance.edit');
+    Route::put('attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'update'])->name('attendance.update');
+    Route::delete('attendance/{attendance}', [\App\Http\Controllers\Admin\AttendanceController::class, 'destroy'])->name('attendance.destroy');
+
+        // Group management routes (admin only)
+        Route::get('groups', [\App\Http\Controllers\Admin\GroupController::class, 'index'])->name('groups.index');
+        Route::get('groups/create', [\App\Http\Controllers\Admin\GroupController::class, 'create'])->name('groups.create');
+        Route::post('groups', [\App\Http\Controllers\Admin\GroupController::class, 'store'])->name('groups.store');
+        Route::get('groups/{group}/edit', [\App\Http\Controllers\Admin\GroupController::class, 'edit'])->name('groups.edit');
+        Route::put('groups/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'update'])->name('groups.update');
+        Route::delete('groups/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'destroy'])->name('groups.destroy');
     });
 });
 
