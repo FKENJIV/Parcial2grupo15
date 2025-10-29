@@ -28,6 +28,9 @@ COPY --from=node_builder /app/public /var/www/html/public
 # Copy rest of the app
 COPY . .
 
+# Copy PHP-FPM configuration
+RUN cp conf/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+
 # Ensure proper permissions for Laravel
 RUN chown -R nginx:nginx /var/www/html \
  && chmod -R 755 /var/www/html/storage \
