@@ -33,7 +33,11 @@ COPY --from=composer_builder /app/vendor ./vendor
 
 # Compilar los assets de Vite
 RUN npm run build \
- && echo "--- public/build contents ---" && ls -la public/build \
+ && if [ -d dist ]; then mkdir -p public/build && cp -r dist/* public/build/; fi \
+ && if [ -d build ]; then mkdir -p public/build && cp -r build/* public/build/; fi \
+ && if [ -f public/build/.vite/manifest.json ]; then cp public/build/.vite/manifest.json public/build/manifest.json; fi \
+ && echo "--- public/build contents ---" \
+ && ls -la public/build \
  && if [ ! -f public/build/manifest.json ]; then echo "ERROR: manifest.json not found!"; exit 1; fi \
  && echo "✓ manifest.json generated successfully"
 
