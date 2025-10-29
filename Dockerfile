@@ -28,10 +28,14 @@ COPY --from=node_builder /app/public /var/www/html/public
 # Copy rest of the app
 COPY . .
 
-# Copy nginx conf and make deploy scripts executable
-RUN mkdir -p /etc/nginx/conf.d \
- && cp -r conf/nginx/* /etc/nginx/conf.d/ || true \
- && chmod +x ./scripts/*.sh || true
+# Copy scripts to /scripts/ where the entrypoint expects them
+RUN mkdir -p /scripts \
+ && cp -r scripts/* /scripts/ || true \
+ && chmod +x /scripts/*.sh || true
+
+# Copy nginx conf
+RUN mkdir -p /etc/nginx/sites-available \
+ && cp conf/nginx/nginx-site.conf /etc/nginx/sites-available/default.conf || true
 
 ENV SKIP_COMPOSER 1
 ENV WEBROOT /var/www/html/public
