@@ -22,11 +22,11 @@ RUN npm run build
 # Stage 3: final image (nginx + php-fpm)
 FROM richarvey/nginx-php-fpm:3.1.6
 
-# Copy compiled assets from node builder
-COPY --from=node_builder /app/public /var/www/html/public
-
-# Copy rest of the app
+# Copy rest of the app FIRST
 COPY . .
+
+# Copy compiled assets from node builder AFTER (so they don't get overwritten)
+COPY --from=node_builder /app/public/build /var/www/html/public/build
 
 # Copy PHP-FPM configuration
 RUN cp conf/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
