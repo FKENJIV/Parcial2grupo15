@@ -15,21 +15,39 @@
                 <flux:navlist.group :heading="__('Menu')" class="grid">
                     @if(in_array(auth()->user()->role, ['teacher', 'docente']))
                         {{-- Teacher Menu --}}
-                        <flux:navlist.item icon="home" :href="route('teacher.dashboard')" :current="request()->routeIs('teacher.dashboard')" wire:navigate class="text-indigo-700">{{ __('Dashboard') }}</flux:navlist.item>
-                        <flux:navlist.item icon="calendar" :href="route('teacher.schedules')" :current="request()->routeIs('teacher.schedules')" wire:navigate class="text-indigo-700">{{ __('Mis Horarios') }}</flux:navlist.item>
-                        <flux:navlist.item icon="users" :href="route('teacher.groups.create')" :current="request()->routeIs('teacher.groups.create')" wire:navigate class="text-indigo-700">{{ __('Crear Grupo') }}</flux:navlist.item>
-                        <flux:navlist.item icon="clock" :href="route('teacher.attendance')" :current="request()->routeIs('teacher.attendance')" wire:navigate class="text-indigo-700">{{ __('Registrar Asistencia') }}</flux:navlist.item>
+                        <flux:navlist.item icon="home" :href="route('teacher.dashboard')" :current="request()->routeIs('teacher.dashboard')" wire:navigate class="text-white">{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="calendar" :href="route('teacher.schedules')" :current="request()->routeIs('teacher.schedules')" wire:navigate class="text-white">{{ __('Mis Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="users" :href="route('teacher.groups.create')" :current="request()->routeIs('teacher.groups.create')" wire:navigate class="text-white">{{ __('Crear Grupo') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clock" :href="route('teacher.attendance')" :current="request()->routeIs('teacher.attendance')" wire:navigate class="text-white">{{ __('Registrar Asistencia') }}</flux:navlist.item>
                     @else
                         {{-- Admin/Superuser Menu --}}
-                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="text-indigo-700">{{ __('Dashboard') }}</flux:navlist.item>
-                        <flux:navlist.item icon="calendar" :href="route('horarios')" :current="request()->routeIs('horarios')" wire:navigate class="text-indigo-700">{{ __('Ver Horarios') }}</flux:navlist.item>
-                        <flux:navlist.item icon="cog" :href="route('admin.schedules.index')" :current="request()->routeIs('admin.schedules.*')" wire:navigate class="text-indigo-700">{{ __('Gestionar Horarios') }}</flux:navlist.item>
-                        <flux:navlist.item icon="bolt" :href="route('admin.subjects.index')" :current="request()->routeIs('admin.subjects.*')" wire:navigate class="text-indigo-700">{{ __('Gestionar Materias') }}</flux:navlist.item>
-                        <flux:navlist.item icon="academic-cap" :href="route('admin.groups.index')" :current="request()->routeIs('admin.groups.*')" wire:navigate class="text-indigo-700">{{ __('Gestionar Grupos') }}</flux:navlist.item>
-                        <flux:navlist.item icon="clock" :href="route('admin.attendance.index')" :current="request()->routeIs('admin.attendance.*')" wire:navigate class="text-indigo-700">{{ __('Registro Asistencia') }}</flux:navlist.item>
-                        <flux:navlist.item icon="users" :href="route('docentes.index')" :current="request()->routeIs('docentes.index')" wire:navigate class="text-indigo-700">{{ __('Docentes') }}</flux:navlist.item>
+                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="text-white">{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="calendar" :href="route('horarios')" :current="request()->routeIs('horarios')" wire:navigate class="text-white">{{ __('Ver Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="cog" :href="route('admin.schedules.index')" :current="request()->routeIs('admin.schedules.*')" wire:navigate class="text-white">{{ __('Gestionar Horarios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="bolt" :href="route('admin.subjects.index')" :current="request()->routeIs('admin.subjects.*')" wire:navigate class="text-white">{{ __('Gestionar Materias') }}</flux:navlist.item>
+                        <flux:navlist.item icon="academic-cap" :href="route('admin.groups.index')" :current="request()->routeIs('admin.groups.*')" wire:navigate class="text-white">{{ __('Gestionar Grupos') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clock" :href="route('admin.attendance.index')" :current="request()->routeIs('admin.attendance.*')" wire:navigate class="text-white">{{ __('Registro Asistencia') }}</flux:navlist.item>
+                        <flux:navlist.item icon="users" :href="route('docentes.index')" :current="request()->routeIs('docentes.index')" wire:navigate class="text-white">{{ __('Docentes') }}</flux:navlist.item>
                     @endif
                 </flux:navlist.group>
+
+                @if(auth()->user()->role === 'admin')
+                    <flux:navlist.group :heading="__('Nuevas Funcionalidades')" class="grid">
+                        <flux:navlist.item icon="exclamation-triangle" :href="route('admin.incidents.index')" :current="request()->routeIs('admin.incidents.*')" wire:navigate class="text-white">{{ __('Incidentes de Aulas') }}</flux:navlist.item>
+                        <flux:navlist.item icon="building-office" :href="route('admin.room-availability.index')" :current="request()->routeIs('admin.room-availability.*')" wire:navigate class="text-white">{{ __('Disponibilidad de Aulas') }}</flux:navlist.item>
+                        <flux:navlist.item icon="chart-bar" :href="route('admin.reports.index')" :current="request()->routeIs('admin.reports.*')" wire:navigate class="text-white">{{ __('Reportes') }}</flux:navlist.item>
+                        <flux:navlist.item icon="arrow-path" :href="route('admin.schedule-change-requests.index')" :current="request()->routeIs('admin.schedule-change-requests.*')" wire:navigate class="text-white">{{ __('Solicitudes de Cambio') }}</flux:navlist.item>
+                        <flux:navlist.item icon="document-text" :href="route('admin.schedule-histories.index')" :current="request()->routeIs('admin.schedule-histories.*')" wire:navigate class="text-white">{{ __('Historial de Cambios') }}</flux:navlist.item>
+                        <flux:navlist.item icon="magnifying-glass" :href="route('admin.audit-logs.index')" :current="request()->routeIs('admin.audit-logs.*')" wire:navigate class="text-white">{{ __('Bitácora de Auditoría') }}</flux:navlist.item>
+                        <flux:navlist.item icon="shield-check" :href="route('admin.user-roles.index')" :current="request()->routeIs('admin.user-roles.*')" wire:navigate class="text-white">{{ __('Gestión de Roles') }}</flux:navlist.item>
+                    </flux:navlist.group>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['teacher', 'docente']))
+                    <flux:navlist.group :heading="__('Mis Solicitudes')" class="grid">
+                        <flux:navlist.item icon="arrow-path" :href="route('teacher.schedule-change-requests.index')" :current="request()->routeIs('teacher.schedule-change-requests.*')" wire:navigate class="text-white">{{ __('Cambios de Horario') }}</flux:navlist.item>
+                    </flux:navlist.group>
+                @endif
             </flux:navlist>
 
             <flux:spacer />
@@ -47,7 +65,7 @@
                     <div class="mt-3">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <flux:button type="submit" variant="ghost" class="w-full text-indigo-700">{{ __('Cerrar sesión') }}</flux:button>
+                            <flux:button type="submit" variant="ghost" class="w-full text-white">{{ __('Cerrar sesión') }}</flux:button>
                         </form>
                     </div>
                 </div>
@@ -59,14 +77,14 @@
                     <div class="flex items-center gap-3">
                         <div class="h-10 w-10 flex-shrink-0 rounded-lg bg-indigo-100 flex items-center justify-center font-semibold text-indigo-700">{{ auth()->user()->initials() }}</div>
                         <div class="flex-1 min-w-0 text-sm">
-                            <div class="font-semibold truncate">{{ auth()->user()->name }}</div>
-                            <div class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</div>
+                            <div class="font-semibold truncate text-white">{{ auth()->user()->name }}</div>
+                            <div class="text-xs text-gray-300 truncate">{{ auth()->user()->email }}</div>
                         </div>
                     </div>
                     <div class="mt-3">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <flux:button type="submit" variant="ghost" class="w-full text-indigo-700">{{ __('Cerrar sesión') }}</flux:button>
+                            <flux:button type="submit" variant="ghost" class="w-full text-white">{{ __('Cerrar sesión') }}</flux:button>
                         </form>
                     </div>
                 </div>

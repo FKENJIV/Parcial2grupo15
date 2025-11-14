@@ -16,6 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'teacher' => \App\Http\Middleware\EnsureUserIsTeacher::class,
         ]);
+        
+        // AUDIT MIDDLEWARE DESHABILITADO - Causa bucle infinito
+        // TODO: Arreglar el problema de recursión
+        // $middleware->web(append: [
+        //     \App\Http\Middleware\AuditMiddleware::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

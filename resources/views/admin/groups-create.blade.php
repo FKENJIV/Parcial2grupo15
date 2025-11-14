@@ -56,9 +56,15 @@
                     </select>
                 </div>
 
-                <div class="md:col-span-2">
+                <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Nombre del Grupo *</label>
                     <input type="text" name="group_name" required placeholder="Ej: Grupo A, Grupo SC, Paralelo 1" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ old('group_name') }}" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Capacidad (Cupo) *</label>
+                    <input type="number" name="capacity" required min="40" placeholder="Mínimo 40 estudiantes" class="w-full rounded-lg border border-gray-200 px-4 py-3 bg-white text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ old('capacity', 40) }}" />
+                    <p class="text-xs text-gray-500 mt-1">Cupo mínimo: 40 estudiantes</p>
                 </div>
             </div>
         </section>

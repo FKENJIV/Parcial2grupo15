@@ -13,7 +13,7 @@
                 <h1 class="text-2xl font-extrabold text-indigo-600">SIS - Horarios</h1>
             </div>
 
-            <nav class="px-4 space-y-1 flex-1">
+            <nav class="px-4 space-y-1 flex-1 overflow-y-auto">
                 <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('dashboard') }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-gray-500' }}" viewBox="0 0 24 24" fill="none">
                         <path d="M3 12h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -39,6 +39,43 @@
                 <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('docentes.index') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('docentes.index') }}">
                     Docentes
                 </a>
+
+                <!-- Nuevas Funcionalidades -->
+                @if(auth()->user()->role === 'admin')
+                    <div class="pt-4 pb-2">
+                        <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Nuevas Funcionalidades</p>
+                    </div>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin.incidents.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin.incidents.index') }}">
+                        🚨 Incidentes de Aulas
+                    </a>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin.reports.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin.reports.index') }}">
+                        📊 Reportes
+                    </a>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin.schedule-change-requests.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin.schedule-change-requests.index') }}">
+                        🔄 Solicitudes de Cambio
+                    </a>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin.schedule-histories.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin.schedule-histories.index') }}">
+                        📜 Historial de Cambios
+                    </a>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('admin.audit-logs.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('admin.audit-logs.index') }}">
+                        🔍 Bitácora de Auditoría
+                    </a>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['teacher', 'docente']))
+                    <div class="pt-4 pb-2">
+                        <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Mis Solicitudes</p>
+                    </div>
+
+                    <a class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('teacher.schedule-change-requests.*') ? 'bg-indigo-600 text-white shadow-lg' : '' }}" href="{{ route('teacher.schedule-change-requests.index') }}">
+                        🔄 Cambios de Horario
+                    </a>
+                @endif
             </nav>
 
             <div class="p-4 mt-auto">

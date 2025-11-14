@@ -38,7 +38,7 @@ class ScheduleController extends Controller
                 $scheduleGrid[$day][$time] = [
                     'subject' => $group->subject,
                     'code' => $group->code,
-                    'classroom' => $group->classroom,
+                    'classroom' => $schedule->aula ?? 'N/A', // Usar el aula del schedule
                     'group_id' => $group->id,
                 ];
                 

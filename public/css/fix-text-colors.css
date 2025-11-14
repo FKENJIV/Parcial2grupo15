@@ -1,0 +1,50 @@
+/* ========================================
+   REGLA PRINCIPAL: TODO EN NEGRO
+   ======================================== */
+* {
+    color: #000 !important;
+}
+
+/* ========================================
+   EXCEPCIÓN 1: SIDEBAR EN BLANCO
+   ======================================== */
+aside,
+aside *,
+[data-flux-sidebar],
+[data-flux-sidebar] *,
+nav.bg-indigo-50 *,
+.bg-indigo-900 * {
+    color: #fff !important;
+}
+
+/* Iconos del sidebar en blanco */
+aside svg,
+[data-flux-sidebar] svg {
+    color: #fff !important;
+    fill: #fff !important;
+}
+
+/* ========================================
+   EXCEPCIÓN 2: BOTONES CON FONDO OSCURO
+   ======================================== */
+.bg-blue-500 *, .bg-blue-600 *, .bg-blue-700 *,
+.bg-green-500 *, .bg-green-600 *, .bg-green-700 *,
+.bg-red-500 *, .bg-red-600 *, .bg-red-700 *,
+.bg-indigo-500 *, .bg-indigo-600 *, .bg-indigo-700 *,
+.bg-purple-500 *, .bg-purple-600 *, .bg-purple-700 *,
+.bg-gray-700 *, .bg-gray-800 *, .bg-gray-900 * {
+    color: #fff !important;
+}
+
+/* ========================================
+   ASEGURAR VISIBILIDAD
+   ======================================== */
+/* Placeholder */
+::placeholder {
+    color: #666 !important;
+}
+
+/* Iconos heredan color del texto */
+svg {
+    fill: currentColor;
+}

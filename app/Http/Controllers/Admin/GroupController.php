@@ -38,12 +38,21 @@ class GroupController extends Controller
             'teacher_id' => 'required|exists:users,id',
             'subject_id' => 'required|exists:subjects,id',
             'group_name' => 'required|string|max:255',
+            'capacity' => 'required|integer|min:40', // Cupo mínimo de 40
             'schedules' => 'required|array|min:1',
             'schedules.*.day' => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes,Sábado',
             'schedules.*.start_time' => 'required|date_format:H:i',
             'schedules.*.end_time' => 'required|date_format:H:i|after:schedules.*.start_time',
             'schedules.*.aula' => 'required|string|max:50',
         ]);
+
+        // Validar que el docente no tenga más de 5 grupos
+        $teacherGroupsCount = Group::where('teacher_id', $validated['teacher_id'])->count();
+        if ($teacherGroupsCount >= 5) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'El docente ya tiene el máximo de 5 grupos asignados.');
+        }
 
         DB::beginTransaction();
         try {
@@ -56,6 +65,7 @@ class GroupController extends Controller
                 'subject_id' => $validated['subject_id'],
                 'subject' => $subject->name, // For backward compatibility
                 'name' => $validated['group_name'], // DB expects 'name' column
+                'capacity' => $validated['capacity'], // Agregar capacidad
             ]);
 
             // Create schedules

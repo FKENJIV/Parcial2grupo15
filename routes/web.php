@@ -85,6 +85,38 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::get('groups/{group}/edit', [\App\Http\Controllers\Admin\GroupController::class, 'edit'])->name('groups.edit');
         Route::put('groups/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'update'])->name('groups.update');
         Route::delete('groups/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'destroy'])->name('groups.destroy');
+
+        // CU10: Incident management routes (admin only)
+        Route::resource('incidents', \App\Http\Controllers\Admin\IncidentController::class);
+
+        // CU12, CU13, CU18: Schedule change request management (admin only)
+        Route::get('schedule-change-requests', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'index'])->name('schedule-change-requests.index');
+        Route::get('schedule-change-requests/{scheduleChangeRequest}', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'show'])->name('schedule-change-requests.show');
+        Route::post('schedule-change-requests/{scheduleChangeRequest}/approve', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'approve'])->name('schedule-change-requests.approve');
+        Route::post('schedule-change-requests/{scheduleChangeRequest}/reject', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'reject'])->name('schedule-change-requests.reject');
+
+        // CU19: Schedule history (admin only)
+        Route::get('schedule-histories', [\App\Http\Controllers\Admin\ScheduleHistoryController::class, 'index'])->name('schedule-histories.index');
+        Route::get('schedule-histories/{scheduleHistory}', [\App\Http\Controllers\Admin\ScheduleHistoryController::class, 'show'])->name('schedule-histories.show');
+
+        // CU8: Audit logs (admin only)
+        Route::get('audit-logs', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('audit-logs/{auditLog}', [\App\Http\Controllers\Admin\AuditLogController::class, 'show'])->name('audit-logs.show');
+
+        // CU9: Room availability (admin only)
+        Route::get('room-availability', [\App\Http\Controllers\Admin\RoomAvailabilityController::class, 'index'])->name('room-availability.index');
+
+        // CU11: User roles management (admin only)
+        Route::get('user-roles', [\App\Http\Controllers\Admin\UserRoleController::class, 'index'])->name('user-roles.index');
+        Route::put('user-roles/{user}', [\App\Http\Controllers\Admin\UserRoleController::class, 'update'])->name('user-roles.update');
+
+        // CU7, CU16: Reports (admin only)
+        Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+        Route::post('reports/attendance', [\App\Http\Controllers\Admin\ReportController::class, 'attendanceReport'])->name('reports.attendance');
+        Route::post('reports/schedule', [\App\Http\Controllers\Admin\ReportController::class, 'scheduleReport'])->name('reports.schedule');
+        Route::post('reports/teacher', [\App\Http\Controllers\Admin\ReportController::class, 'teacherReport'])->name('reports.teacher');
+        Route::post('reports/workload', [\App\Http\Controllers\Admin\ReportController::class, 'workloadReport'])->name('reports.workload');
+        Route::post('reports/absence', [\App\Http\Controllers\Admin\ReportController::class, 'absenceReport'])->name('reports.absence');
     });
 });
 
@@ -100,6 +132,12 @@ Route::middleware(['auth', 'verified', 'teacher'])->prefix('teacher')->name('tea
     // CU5: Registrar asistencia docente
     Route::get('attendance', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendance');
     Route::post('attendance', [\App\Http\Controllers\Teacher\AttendanceController::class, 'store'])->name('attendance.store');
+
+    // CU12: Schedule change requests (teacher)
+    Route::get('schedule-change-requests', [\App\Http\Controllers\Teacher\ScheduleChangeRequestController::class, 'index'])->name('schedule-change-requests.index');
+    Route::get('schedule-change-requests/create', [\App\Http\Controllers\Teacher\ScheduleChangeRequestController::class, 'create'])->name('schedule-change-requests.create');
+    Route::post('schedule-change-requests', [\App\Http\Controllers\Teacher\ScheduleChangeRequestController::class, 'store'])->name('schedule-change-requests.store');
+    Route::get('schedule-change-requests/{scheduleChangeRequest}', [\App\Http\Controllers\Teacher\ScheduleChangeRequestController::class, 'show'])->name('schedule-change-requests.show');
 });
 
 Route::middleware(['auth'])->group(function () {

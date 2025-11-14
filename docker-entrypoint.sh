@@ -9,7 +9,6 @@ chmod -R 775 /var/www/html/bootstrap/cache
 
 echo "Clearing caches..."
 php artisan config:clear
-php artisan cache:clear
 php artisan view:clear
 
 echo "Caching configuration..."
